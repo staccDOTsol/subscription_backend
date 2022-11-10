@@ -63,8 +63,8 @@ import  axios  from  'axios'
 
 
   app.post('/handle', async (request,res) => {
-    try {
     console.log((request.body))
+    try {
     let nft = request.body.nft
     let connection = new Connection("https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
@@ -103,6 +103,7 @@ import  axios  from  'axios'
       })
     }
   } catch (err){
+    console.log(err)
 res.send(500)
   }
   })

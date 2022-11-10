@@ -64,8 +64,8 @@ import  axios  from  'axios'
 
   app.post('/handle', async (request,res) => {
     try {
-    console.log((request.params))
-    let nft = request.params.nft
+    console.log((request.body))
+    let nft = request.body.nft
     let connection = new Connection("https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
     const metadata = metadatas.pubkey
@@ -99,12 +99,11 @@ import  axios  from  'axios'
     } catch (error) {
       console.error(error)
       res.json( {
-        error: 'Upload error',
         uri: undefined
       })
     }
   } catch (err){
-
+res.send(500)
   }
   })
 

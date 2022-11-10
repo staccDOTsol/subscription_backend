@@ -107,7 +107,7 @@ import  axios  from  'axios'
          console.log(data)
 
       //@ts-ignore
-      res.json( {uri: offchaindata.data.uri})
+      res.send( offchaindata.data.uri)
        
     } catch (error) {
       console.error(error)

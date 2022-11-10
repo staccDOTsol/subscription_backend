@@ -3,7 +3,13 @@ import { Connection, PublicKey } from  "@solana/web3.js"
 import cors from 'cors'
 import fetch from 'node-fetch'
 import express from  'express' 
+import crypto from 'crypto';
+import BN from 'bn.js'
+
+
 import bodyParser from "body-parser"
+
+
 let app = new express()
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -92,9 +98,17 @@ import  axios  from  'axios'
         },
       })
       let json = await response.json()
-
-      //@ts-ignore
-      res.json({uri: DwebLink(json.value.cid) + `?ext=json`})
+      let uri2 = DwebLink(json.value.cid) + `?ext=json`
+   //   uri2 = (new Uint8Array (( crypto.createHash('md5').update(uri2, 'utf-8').digest()))).toString()
+  //    console.log(uri2)
+   //   console.log(uri2.length)
+  //    let hm = []
+   //   for (var i = 0 ; i < uri2.split(',').length; i++){
+   //     hm.push( new BN(uri2.split(',')[i]))
+   //   }
+  //    console.log(hm)
+  console.log(uri2)
+res.send(uri2)
        
     } catch (error) {
       console.error(error)
@@ -104,9 +118,17 @@ import  axios  from  'axios'
     }
   } catch (err){
     console.log(err)
-res.send(500)
+res.sendStatus(500)
   }
   })
+  function convert(Uint8Arr) {
+    var length = Uint8Arr.length;
+console.log(length)
+    let buffer = Buffer.from(Uint8Arr);
+    var result = buffer.readUInt8(0, length);
+
+    return result;
+}
 
 
   

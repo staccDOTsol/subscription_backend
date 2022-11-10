@@ -62,11 +62,11 @@ import  axios  from  'axios'
   const DwebLink = (cid) => `https://${cid}.ipfs.dweb.link`
 
 
-  app.get('/handle', async (request,res) => {
+  app.post('/handle', async (request,res) => {
     try {
-    console.log((request.query))
-    let nft = request.query.nft
-    let connection = new Connection("https://api.devnet.solana.com")
+    console.log((request.params))
+    let nft = request.params.nft
+    let connection = new Connection("https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
     const metadata = metadatas.pubkey
         let data = (metadatas.data)
@@ -76,11 +76,9 @@ import  axios  from  'axios'
         } catch (err){
           offchaindata  ={data: hehe}
         }
-        console.log(offchaindata)
         offchaindata.data.attributes = hehe.attributes
     //@ts-ignore
     const body = offchaindata.data
-    console.log(body)
     try {
       const response = await fetch('https://api.nft.storage/upload', {
         //@ts-ignore
@@ -94,20 +92,9 @@ import  axios  from  'axios'
         },
       })
       let json = await response.json()
-      offchaindata.data.uri = DwebLink(json.value.cid) + `?ext=json`
-      console.log(offchaindata)
-      console.log(offchaindata.data)
-      let hehe2 = {
-        name: offchaindata.data.name,
-        symbol: offchaindata.data.symbol,
-        uri: offchaindata.data.uri,
-        creators: data.data.creators,
-        sellerFeeBasisPoints: data.data.sellerFeeBasisPoints,
-      }     
-         console.log(data)
 
       //@ts-ignore
-      res.json({uri: offchaindata.data.uri})
+      res.json({uri: DwebLink(json.value.cid) + `?ext=json`})
        
     } catch (error) {
       console.error(error)

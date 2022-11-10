@@ -64,8 +64,8 @@ import  axios  from  'axios'
 
   app.post('/handle', async (request,res) => {
     try {
-    console.log((request.body))
-    let nft = request.body.nft
+    console.log((request.params))
+    let nft = request.params.nft
     let connection = new Connection("https://api.devnet.solana.com")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
     const metadata = metadatas.pubkey

@@ -62,7 +62,7 @@ import  axios  from  'axios'
   const DwebLink = (cid) => `https://${cid}.ipfs.dweb.link`
 
 
-  app.post('/handle', async (request,res) => {
+  app.get('/handle', async (request,res) => {
     try {
     console.log((request.params))
     let nft = request.params.nft

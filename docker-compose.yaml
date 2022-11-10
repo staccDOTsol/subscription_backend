@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  oracle:
+    image: "switchboardlabs/node:dev-v2-07-18-22"
+    network_mode: host
+    restart: always
+    secrets:
+      - PAYER_SECRETS
+    environment:
+      - LIVE=1
+      - CLUSTER=devnet
+      - HEARTBEAT_INTERVAL=30 # Seconds
+      - ORACLE_KEY=Gdy6Tw2z2q92HR1DDjtX9SmPemzcwdGQwrYcTCg1rRdy
+      - RPC_URL=https://api.devnet.solana.com
+    volumes:
+      - ./configs.json:/configs.json
+secrets:
+  PAYER_SECRETS:
+    file: ../../../jaregm.json
+

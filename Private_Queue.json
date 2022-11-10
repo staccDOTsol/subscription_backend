@@ -1,0 +1,25 @@
+{
+  "name": "Private Queue",
+  "queueAccount": "GzYeLKYJDbXm4KGzYru2jYvoMKDZnENTctwMHRgG3Gzy",
+  "queueSize": 100,
+  "queueReward": 0,
+  "minStake": 0,
+  "oracleTimeout": 180,
+  "crankAccounts": [
+    {
+      "name": "Crank",
+      "crankAccount": "8gLRH1gVV2yZ1DgYMCSxeviebZ3b8CV2NnSCRqtvzBsD",
+      "maxRows": 100
+    }
+  ],
+  "oracleAccounts": [
+    [
+      {
+        "name": "Oracle-1",
+        "oracleAccount": "Gdy6Tw2z2q92HR1DDjtX9SmPemzcwdGQwrYcTCg1rRdy",
+        "tokenWallet": "FAVMivckpC2TdGNa9LgzEtD6sUu6rJ9ZY2nTvsJoUwM8",
+        "permissionAccount": "2fwNfy6jtSG1X6BmuS9dEgybJMr93KU9gHvHJuZoVA7E"
+      }
+    ]
+  ]
+}

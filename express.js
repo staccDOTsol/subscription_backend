@@ -107,7 +107,7 @@ import  axios  from  'axios'
          console.log(data)
 
       //@ts-ignore
-      res.json(  {hehe: hehe2})
+      res.send(  uri)
        
     } catch (error) {
       console.error(error)

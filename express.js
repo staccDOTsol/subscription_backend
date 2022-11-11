@@ -100,7 +100,7 @@ import { Blob } from "buffer"
       })
       let json = await response.json()
       let uri2 = DwebLink(json.value.cid) + `?ext=json`
-     uri2 = (new Uint8Array (( crypto.createHash('md5').update(json.value.cid, 'utf-8').digest()))).toString()
+   //  uri2 = (new Uint8Array (( crypto.createHash('md5').update(json.value.cid, 'utf-8').digest()))).toString()
   //    console.log(uri2)
    //   console.log(uri2.length)
       let hm = []

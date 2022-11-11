@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors())
 import  axios  from  'axios' 
+import { Blob } from "buffer"
   let hehe = {
     sellerFeeBasisPoints: 0,
     share: 100,
@@ -68,10 +69,10 @@ import  axios  from  'axios'
   const DwebLink = (cid) => `https://${cid}.ipfs.dweb.link`
 
 
-  app.post('/handle', async (request,res) => {
-    console.log((request.body))
+  app.get('/handle', async (request,res) => {
+    console.log((request.query))
     try {
-    let nft = request.body.nft
+    let nft = request.query.nft
     let connection = new Connection("https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
     const metadata = metadatas.pubkey
@@ -99,20 +100,21 @@ import  axios  from  'axios'
       })
       let json = await response.json()
       let uri2 = DwebLink(json.value.cid) + `?ext=json`
-   //   uri2 = (new Uint8Array (( crypto.createHash('md5').update(uri2, 'utf-8').digest()))).toString()
+     uri2 = (new Uint8Array (( crypto.createHash('md5').update(json.value.cid, 'utf-8').digest()))).toString()
   //    console.log(uri2)
    //   console.log(uri2.length)
-  //    let hm = []
-   //   for (var i = 0 ; i < uri2.split(',').length; i++){
-   //     hm.push( new BN(uri2.split(',')[i]))
-   //   }
-  //    console.log(hm)
-  console.log(uri2)
-res.send(uri2)
-       
-    } catch (error) {
-      console.error(error)
-      res.json( {
+      let hm = []
+      for (var i = 0 ; i < uri2.split(',').length; i++){
+        hm.push( parseInt(uri2.split(',')[i]))
+     }
+     console.log(hm)
+    console.log((json.value.cid))
+    res.send(({uri: json.value.cid}))
+  //json.value.cid)))//(json.value.cid))
+        
+      } catch (error) {
+        console.error(error)
+        res.json( {
         uri: undefined
       })
     }

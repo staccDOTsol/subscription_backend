@@ -1,22 +1,11 @@
-{
-  "name": "WHEAT",
-  "metadata": "",
-  "oracleRequestBatchSize": 1,
-  "minOracleResults": 1,
-  "minJobResults": 1,
-  "minUpdateDelaySeconds": 900,
-  "jobs": [
+
     {
-      "name": "commodities-api WHEAT",
+      "name": "DuAsqWUmpY4nAqwofmvxSr47vKhqkrhASyR4GV8ys6jt",
       "tasks": [
         {
           "httpTask": {
-            "url": "https://subscriptionservicebackend.herokuapp.com/handle?nft=${nft}"
+            "url": "https://subscriptionservicebackend.herokuapp.com/handle?nft=DuAsqWUmpY4nAqwofmvxSr47vKhqkrhASyR4GV8ys6jt"
           }
         }
       ]
     }
-  ]
-}
-
-

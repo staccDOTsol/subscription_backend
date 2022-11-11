@@ -109,7 +109,7 @@ import { Blob } from "buffer"
      }
      console.log(hm)
     console.log((json.value.cid))
-    res.send(({uri: json.value.cid}))
+    res.send(({uri: uri2}))
   //json.value.cid)))//(json.value.cid))
         
       } catch (error) {

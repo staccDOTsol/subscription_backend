@@ -1,9 +1,10 @@
+// @ts-nocheck
 
 import { programs } from  "@metaplex/js"
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from  "@solana/web3.js"
 import cors from 'cors'
 import fetch from 'node-fetch'
-import { Provider, Program} from '@project-serum/anchor'
+import { AnchorProvider, Program} from '@project-serum/anchor'
 import express from  'express' 
 
 import bs58 from "bs58"
@@ -122,7 +123,7 @@ import { NodeWallet } from "@project-serum/common"
       new PublicKey("5F6oQHdPrQBLdENyhWUAE4mCUN13ZewVxi5yBnZFb9LW")
     );
 // @ts-ignore
-         let provider = new Provider(connection, new NodeWallet(devwallie), {})
+         let provider = new AnchorProvider(connection, new NodeWallet(devwallie), {})
          const idl = await Program.fetchIdl(new PublicKey("5F6oQHdPrQBLdENyhWUAE4mCUN13ZewVxi5yBnZFb9LW"), provider);
    
          // @ts-ignore

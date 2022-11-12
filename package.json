@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "node-fetch": "2",
-    "ts-node": "latest"
+    "ts-node": "latest",
+    "typescript": "^4.8.4"
   }
 }

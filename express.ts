@@ -18,8 +18,7 @@ app.use(bodyParser.json());
 app.use(cors())
 import  axios  from  'axios' 
 import { NodeWallet } from "@project-serum/common"
-import { FanoutClient } from "../ui/generated"
-import { connect } from "http2"
+
   let hehe = {
     sellerFeeBasisPoints: 0,
     share: 100,

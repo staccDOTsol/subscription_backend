@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { programs } from  "@metaplex/js"
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction } from  "@solana/web3.js"
 import cors from 'cors'

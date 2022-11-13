@@ -77,7 +77,7 @@ import { NodeWallet } from "@project-serum/common"
       let fanout = request.body.fanout
     let nft = request.body.nft
     let tx = new Transaction()
-    let connection = new Connection("https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L", "singleGossip")
+    let connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk", "singleGossip")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
     const who = new PublicKey(request.body.who)
     console.log(metadatas)
@@ -89,10 +89,14 @@ import { NodeWallet } from "@project-serum/common"
         } catch (err){
           offchaindata  ={data: hehe}
         }
-        offchaindata.data.attributes = hehe.attributes
         offchaindata.data.creators = data.data.creators
     //@ts-ignore
     const body = offchaindata.data
+    for (var att of body.attributes){
+      if (att.trait_type==request.body.to.split('-')[0]){
+        att.value = (request.body.val / 10 ** 6).toString()
+      }
+    }
     try {
       const response = await fetch('https://api.nft.storage/upload', {
         //@ts-ignore
@@ -119,15 +123,15 @@ import { NodeWallet } from "@project-serum/common"
      // @ts-ignore
     console.log((json.value.cid))
     const [newUri, newUriBump] = await PublicKey.findProgramAddress(
-      [Buffer.from("fanout-new-uri"), (new PublicKey(fanout)).toBuffer(), (who.toBuffer())],
-      new PublicKey("5F6oQHdPrQBLdENyhWUAE4mCUN13ZewVxi5yBnZFb9LW")
+      [Buffer.from("upgrad00r-new-uri"), (new PublicKey(fanout)).toBuffer(), (who.toBuffer())],
+      new PublicKey("84zHEoSwTo6pb259RtmeYQ5KNStik8pib815q7reZjdx")
     );
 // @ts-ignore
          let provider = new AnchorProvider(connection, new NodeWallet(devwallie), {})
-         const idl = await Program.fetchIdl(new PublicKey("5F6oQHdPrQBLdENyhWUAE4mCUN13ZewVxi5yBnZFb9LW"), provider);
+         const idl = await Program.fetchIdl(new PublicKey("84zHEoSwTo6pb259RtmeYQ5KNStik8pib815q7reZjdx"), provider);
    
          // @ts-ignore
-         const program = new Program(idl as Idl, new PublicKey("5F6oQHdPrQBLdENyhWUAE4mCUN13ZewVxi5yBnZFb9LW"), provider) as Program<any>;
+         const program = new Program(idl as Idl, new PublicKey("84zHEoSwTo6pb259RtmeYQ5KNStik8pib815q7reZjdx"), provider) as Program<any>;
    
          let tx = new Transaction().add(await program.instruction.processSubmitUri(
   // @ts-ignore
@@ -152,9 +156,40 @@ import { NodeWallet } from "@project-serum/common"
 
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash
     tx.feePayer = devwallie.publicKey
-   let urg =  sendAndConfirmTransaction(connection, tx, [devwallie])
+
+setTimeout(async function(){
+
+  let tx = new Transaction().add(await program.instruction.processDrainEmAll(
+ 
+             {
+               accounts: {
+                 authority: devwallie.publicKey,
+                 fanout: new PublicKey(fanout),
+                 user: who,
+                 newUri,
+                 
+               },
+             }
+           ))
+
+    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash
+    tx.feePayer = devwallie.publicKey
+    try {
+      let urg = await sendAndConfirmTransaction(connection, tx, [devwallie])
+      console.log(urg)
+       } catch (err){
+         console.log(err)
+       }
+}, 60999)
+    try {
+   let urg = await sendAndConfirmTransaction(connection, tx, [devwallie])
    console.log(urg)
+    } catch (err){
+      console.log(err)
+    }
     console.log(devwallie.publicKey.toBase58())
+
+    console.log(newUri.toBase58())
     // @ts-ignore
     res.json(({pubkey: newUri, body}))
   //json.value.cid)))//(json.value.cid))

@@ -77,7 +77,11 @@ import { NodeWallet } from "@project-serum/common"
       let fanout = request.body.fanout
     let nft = request.body.nft
     let tx = new Transaction()
-    let connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk", "singleGossip")
+    let connection = new Connection(request.body.environment != 'devnet' ? "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk"
+    
+    : "https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L"
+
+    , "singleGossip")
     const metadatas = (await programs.metadata.Metadata.findByMint (connection, new PublicKey(nft)));
     const who = new PublicKey(request.body.who)
     console.log(metadatas)

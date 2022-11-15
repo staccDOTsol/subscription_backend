@@ -96,6 +96,11 @@ import { NodeWallet } from "@project-serum/common"
       if (att.trait_type==request.body.to.split('-')[0]){
         att.value = (request.body.val / 10 ** 6).toString()
       }
+      if (att.trait_type=="end_date"){
+        att.value = new Date(
+          new Date().getTime() + 1000 * 60 * 60 * 24 * 30
+        ).toString()
+      }
     }
     try {
       const response = await fetch('https://api.nft.storage/upload', {
@@ -208,4 +213,4 @@ res.sendStatus(500)
 
 
   
-  app.listen(process.env.PORT || 3000)
+  app.listen(process.env.PORT || 8080)

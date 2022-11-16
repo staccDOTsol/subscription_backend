@@ -1,5 +1,5 @@
 // @ts-nocheck
-
+import { sharp } from 'sharp'
 import { programs } from "@metaplex/js";
 import {
   Connection,
@@ -147,16 +147,22 @@ app.post("/handle", async (request, res) => {
 let buffer = Buffer.from(arrayBuffer);
 let dt= new Date()+'.png'
 await fs.writeFileSync(dt, buffer)
-let image_url 
-try {
+
+const roundedCornerResizer =
+  sharp()
+    .resize(512, 512)
+    .composite([{
+      input: fs.createReadStream(dt),
+      blend: 'dest-in'
+    }])
+    .png();
 
         ress = await openai.createImageVariation(
-          fs.createReadStream(dt),
+          roundedCornerResizer,
           1,
           "512x512"
         );
-
-         image_url = ress.data.data[0].url;
+        let image_url = ress.data.data[0].url;
          response = await fetch(image_url);
          blob = await response.blob();
     
@@ -165,7 +171,6 @@ try {
      buffer = Buffer.from(arrayBuffer);
      let dt2 = new Date()+'.png'
     await fs.writeFileSync(dt2, buffer)
-       
 try {
         ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '512x512'})
 
@@ -191,23 +196,6 @@ try {
         );
 } catch(err){
   console.log(err.data)
-}
-} catch (err){
-  try {
-    ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '512x512'})
-
-  } catch(err){
-    console.log(err.response.data)
-  }
-    image_url = ress.data.data[0].url;
-    response = await fetch(image_url);
-    blob = await response.blob();
-
-arrayBuffer = await blob.arrayBuffer();
-
-buffer = Buffer.from(arrayBuffer);
-let dt3 = new Date()+'.png'
-await fs.writeFileSync(dt3, buffer)
 }
         image_url = ress.data.data[0].url;
     try {

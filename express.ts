@@ -160,7 +160,7 @@ const roundedCornerResizer =
         ress = await openai.createImageVariation(
           roundedCornerResizer,
           1,
-          "256x256"
+          "512x512"
         );
         let image_url = ress.data.data[0].url;
          response = await fetch(image_url);
@@ -172,7 +172,7 @@ const roundedCornerResizer =
      let dt2 = new Date()+'.png'
     await fs.writeFileSync(dt2, buffer)
 try {
-        ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '256x256'})
+        ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '512x512'})
 
       } catch(err){
         console.log(err.response.data)
@@ -192,7 +192,7 @@ try {
           fs.createReadStream(dt3),
           request.body.prompt,
           1,
-          "256x256"
+          "512x512"
         );
 } catch(err){
   console.log(err.data)

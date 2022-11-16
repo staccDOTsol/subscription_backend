@@ -200,7 +200,7 @@ try {
     console.log(err.response.data)
   }
     image_url = ress.data.data[0].url;
-    response = await fetch(image_url2);
+    response = await fetch(image_url);
     blob = await response.blob();
 
 arrayBuffer = await blob.arrayBuffer();

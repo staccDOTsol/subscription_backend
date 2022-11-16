@@ -203,21 +203,21 @@ try {
       const bundlr = new Bundlr("https://node1.bundlr.network", "solana", devwallie.secretKey, { providerUrl: "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk" });
       let recipeBuffer = fs.readFileSync(dt138)
      
-       const tx = bundlr.createTransaction(recipeBuffer)
+       const tx2 = bundlr.createTransaction(recipeBuffer)
      
        // want to know how much you'll need for an upload? simply:
        // get the number of bytes you want to upload
-       const size = tx.size
+       const size = tx2.size
        // query the bundlr node to see the price for that amount
        const cost = await bundlr.getPrice(size);
        const fundStatus = await bundlr.fund(Math.ceil(cost.toNumber()))
        console.log(fundStatus)
        // sign the transaction
-       await tx.sign()
+       await tx2.sign()
        // get the transaction's ID:
-       const id = tx.id
+       const id = tx2.id
        // upload the transaction
-       const result = await tx.upload()
+       const result = await tx2.upload()
        const link = `https://arweave.net/${result.id}`;
        body.image = link;
 

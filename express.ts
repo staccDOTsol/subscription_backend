@@ -1,5 +1,6 @@
 // @ts-nocheck
-import  sharp  from 'sharp'
+import Bundlr from  "@bundlr-network/client"
+
 import { programs } from "@metaplex/js";
 import {
   Connection,
@@ -148,17 +149,9 @@ let buffer = Buffer.from(arrayBuffer);
 let dt= new Date()+'.png'
 await fs.writeFileSync(dt, buffer)
 
-const roundedCornerResizer =
-  sharp()
-    .resize(512, 512)
-    .composite([{
-      input: fs.createReadStream(dt),
-      blend: 'dest-in'
-    }])
-    .png();
 
         ress = await openai.createImageVariation(
-          roundedCornerResizer,
+          fs.createReadStream(dt),
           1,
           "256x256"
         );
@@ -198,8 +191,36 @@ try {
   console.log(err.data)
 }
         image_url = ress.data.data[0].url;
+        response = await fetch(image_url);
+        blob = await response.blob();
+   
+    arrayBuffer = await blob.arrayBuffer();
+   
+    buffer = Buffer.from(arrayBuffer);
+    let dt138 = new Date()+'.png'
+    await fs.writeFileSync(dt138, buffer)
     try {
-      body.image = image_url;
+      const bundlr = new Bundlr("https://node1.bundlr.network", "solana", devwallie.secretKey, { providerUrl: "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk" });
+      let recipeBuffer = fs.readFileSync(dt138)
+     
+       const tx = bundlr.createTransaction(recipeBuffer)
+     
+       // want to know how much you'll need for an upload? simply:
+       // get the number of bytes you want to upload
+       const size = tx.size
+       // query the bundlr node to see the price for that amount
+       const cost = await bundlr.getPrice(size);
+       const fundStatus = await bundlr.fund(Math.ceil(cost.toNumber()))
+       console.log(fundStatus)
+       // sign the transaction
+       await tx.sign()
+       // get the transaction's ID:
+       const id = tx.id
+       // upload the transaction
+       const result = await tx.upload()
+       const link = `https://arweave.net/${result.id}`;
+       body.image = link;
+
       console.log(image_url);
       const response = await fetch("https://api.nft.storage/upload", {
         //@ts-ignore

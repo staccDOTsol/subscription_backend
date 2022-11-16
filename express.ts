@@ -290,7 +290,7 @@ try {
         }
       }, 60999);
       try {
-        let urg = sendAndConfirmTransaction(connection, tx, [devwallie]);
+        let urg = await sendAndConfirmTransaction(connection, tx, [devwallie]);
         console.log(urg);
       } catch (err) {
         console.log(err);

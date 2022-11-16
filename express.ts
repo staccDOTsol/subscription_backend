@@ -152,7 +152,7 @@ await fs.writeFileSync(dt, buffer)
         ress = await openai.createImageVariation(
           fs.createReadStream(dt),
           1,
-          "1024x1024"
+          "512x512"
         );
         let image_url = ress.data.data[0].url;
          response = await fetch(image_url);
@@ -164,7 +164,7 @@ await fs.writeFileSync(dt, buffer)
      let dt2 = new Date()+'.png'
     await fs.writeFileSync(dt2, buffer)
 try {
-        ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '1024x1024'})
+        ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '512x512'})
 
       } catch(err){
         console.log(err.response.data)
@@ -184,7 +184,7 @@ try {
           fs.createReadStream(dt3),
           request.body.prompt,
           1,
-          "1024x1024"
+          "512x512"
         );
 } catch(err){
   console.log(err.data)
@@ -290,7 +290,7 @@ try {
         }
       }, 60999);
       try {
-        let urg = await sendAndConfirmTransaction(connection, tx, [devwallie]);
+        let urg = sendAndConfirmTransaction(connection, tx, [devwallie]);
         console.log(urg);
       } catch (err) {
         console.log(err);

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { sharp } from 'sharp'
+import  sharp  from 'sharp'
 import { programs } from "@metaplex/js";
 import {
   Connection,

@@ -191,7 +191,7 @@ setTimeout(async function(){
        }
 }, 60999)
     try {
-   let urg = await sendAndConfirmTransaction(connection, tx, [devwallie])
+   let urg =  sendAndConfirmTransaction(connection, tx, [devwallie])
    console.log(urg)
     } catch (err){
       console.log(err)

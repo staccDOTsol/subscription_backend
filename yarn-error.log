@@ -14,7 +14,7 @@ Platform:
   darwin arm64
 
 Trace: 
-  Error: EACCES: permission denied, unlink '/Users/jarettdunn/forks/trait-upgrad00r/backend/node_modules/.bin/he'
+  Error: EACCES: permission denied, unlink '/Users/jarettdunn/forks/trait-FUS00r/backend/node_modules/.bin/he'
 
 npm manifest: 
   {

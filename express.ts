@@ -1,6 +1,6 @@
 // @ts-nocheck
 import Bundlr from  "@bundlr-network/client"
-
+import sharp from 'sharp'
 import { programs } from "@metaplex/js";
 import {
   Connection,
@@ -92,6 +92,7 @@ app.post("/handle", async (request, res) => {
   try {
     let fanout = request.body.fanout;
     let nft = request.body.nft;
+    let nft2 = request.body.nft2;
     let tx = new Transaction();
     let connection = new Connection(
       request.body.environment.label != "devnet"
@@ -104,6 +105,10 @@ app.post("/handle", async (request, res) => {
       connection,
       new PublicKey(nft)
     );
+    const metadatas2 = await programs.metadata.Metadata.findByMint(
+      connection,
+      new PublicKey(nft2)
+    );
     const who = new PublicKey(request.body.who);
     console.log(metadatas);
     const metadata = metadatas.pubkey;
@@ -114,10 +119,37 @@ app.post("/handle", async (request, res) => {
     } catch (err) {
       offchaindata = { data: hehe };
     }
-    offchaindata.data.creators = data.data.creators;
+    let data2 = metadatas2.data;
+    let offchaindata2;
+    try {
+      offchaindata2 = await await axios.get(data.data.uri);
+    } catch (err) {
+      offchaindata2 = { data: hehe };
+    }
+    offchaindata2.data.creators = data.data.creators;
     //@ts-ignore
     const body = offchaindata.data;
     let good = false;
+    try {
+    for (var att of offchaindata2.data.attributes) {
+      body.attributes.push(att)
+      if (att.trait_type == request.body.to.split("-")[0]) {
+        att.value = (request.body.val / 10 ** 6).toString();
+      }
+      if (att.trait_type == "end_date") {
+        att.value = new Date(
+          new Date().getTime() + 1000 * 60 * 60 * 24 * 30
+        ).toString();
+      }
+      if (att.trait_type == "prompt") {
+        good = true;
+        att.value = request.body.prompt;
+      }
+    }
+  } catch (err){
+
+  }
+  try {
     for (var att of body.attributes) {
       if (att.trait_type == request.body.to.split("-")[0]) {
         att.value = (request.body.val / 10 ** 6).toString();
@@ -138,9 +170,14 @@ app.post("/handle", async (request, res) => {
         value: request.body.prompt,
       });
     }
+  } catch (err){
+
+  }
     let ress 
     console.log(body);
+
     let response = await fetch(body.image);
+
     let blob = await response.blob();
 
     let arrayBuffer = await blob.arrayBuffer();
@@ -148,47 +185,64 @@ app.post("/handle", async (request, res) => {
 let buffer = Buffer.from(arrayBuffer);
 let dt= new Date()+'.png'
 await fs.writeFileSync(dt, buffer)
+  response = await fetch(offchaindata2.data.image);
 
+     blob = await response.blob();
 
-        ress = await openai.createImageVariation(
-          fs.createReadStream(dt),
-          1,
-          "256x256"
-        );
-        let image_url = ress.data.data[0].url;
-         response = await fetch(image_url);
-         blob = await response.blob();
-    
      arrayBuffer = await blob.arrayBuffer();
-    
-     buffer = Buffer.from(arrayBuffer);
-     let dt2 = new Date()+'.png'
-    await fs.writeFileSync(dt2, buffer)
-try {
-        ress = await openai.createImage({prompt: request.body.prompt, n: 1, size: '256x256'})
 
-      } catch(err){
-        console.log(err.response.data)
-      }
-        let image_url2 = ress.data.data[0].url;
-        response = await fetch(image_url2);
-        blob = await response.blob();
-   
-    arrayBuffer = await blob.arrayBuffer();
-   
-    buffer = Buffer.from(arrayBuffer);
-    let dt3 = new Date()+'.png'
-    await fs.writeFileSync(dt3, buffer)
+ buffer = Buffer.from(arrayBuffer);
+ let dt111= new Date()+'.png'
+
+await fs.writeFileSync(dt111, buffer)
+const roundedCornerResizer =await sharp(dt)
+.ensureAlpha().resize(256, 256).png().toFile(dt+'1')
+const roundedCornerResizer2 =await sharp(dt111)
+.ensureAlpha().resize(256, 256).png().toFile(dt111+'1')
 try {
-        ress = await openai.createImageEdit(
-          fs.createReadStream(dt2),
+
+ress = await openai.createImageVariation(
+  fs.createReadStream(dt+'1'),
+  1,
+  "256x256"
+);
+} catch (err){
+  console.log(err.response.data.error)
+}
+let image_url = ress.data.data[0].url;
+ response = await fetch(image_url);
+ blob = await response.blob();
+
+arrayBuffer = await blob.arrayBuffer();
+
+buffer = Buffer.from(arrayBuffer);
+let dt3 = new Date()+'.png'
+await fs.writeFileSync(dt3, buffer)
+ress = await openai.createImageVariation(
+  fs.createReadStream(dt111+'1'),
+  1,
+  "256x256"
+);
+ image_url = ress.data.data[0].url;
+ response = await fetch(image_url);
+ blob = await response.blob();
+
+arrayBuffer = await blob.arrayBuffer();
+
+buffer = Buffer.from(arrayBuffer);
+let dt4 = new Date()+'.png'
+await fs.writeFileSync(dt4, buffer)
+
+try {
+   ress = await openai.createImageEdit(
           fs.createReadStream(dt3),
+         fs.createReadStream(dt4),
           request.body.prompt,
           1,
           "256x256"
         );
 } catch(err){
-  console.log(err.data)
+  console.log(err.response.data.error)
 }
         image_url = ress.data.data[0].url;
         response = await fetch(image_url);
@@ -221,7 +275,6 @@ try {
        const link = `https://arweave.net/${result.id}`;
        body.image = link;
 
-      console.log(image_url);
       const response = await fetch("https://api.nft.storage/upload", {
         //@ts-ignore
         body: JSON.stringify(body),
@@ -246,11 +299,11 @@ try {
       console.log(json.value.cid);
       const [newUri, newUriBump] = await PublicKey.findProgramAddress(
         [
-          Buffer.from("upgrad00r-new-uri"),
+          Buffer.from("FUS00r-new-uri"),
           new PublicKey(fanout).toBuffer(),
           who.toBuffer(),
         ],
-        new PublicKey("84zHEoSwTo6pb259RtmeYQ5KNStik8pib815q7reZjdx")
+        new PublicKey("GR8qnkCuwBM3aLkAdMQyy3n6NacecPha7xhwkmLEVNBM")
       );
       // @ts-ignore
       let provider = new AnchorProvider(
@@ -259,14 +312,14 @@ try {
         {}
       );
       const idl = await Program.fetchIdl(
-        new PublicKey("84zHEoSwTo6pb259RtmeYQ5KNStik8pib815q7reZjdx"),
+        new PublicKey("GR8qnkCuwBM3aLkAdMQyy3n6NacecPha7xhwkmLEVNBM"),
         provider
       );
 
       // @ts-ignore
       const program = new Program(
         idl as Idl,
-        new PublicKey("84zHEoSwTo6pb259RtmeYQ5KNStik8pib815q7reZjdx"),
+        new PublicKey("GR8qnkCuwBM3aLkAdMQyy3n6NacecPha7xhwkmLEVNBM"),
         provider
       ) as Program<any>;
 
@@ -319,7 +372,7 @@ try {
         }
       }, 60999);
       try {
-        let urg = sendAndConfirmTransaction(connection, tx, [devwallie]);
+        let urg =await sendAndConfirmTransaction(connection, tx, [devwallie]);
         console.log(urg);
       } catch (err) {
         console.log(err);

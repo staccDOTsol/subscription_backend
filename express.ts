@@ -94,9 +94,10 @@ app.post("/handle", async (request, res) => {
     let nft = request.body.nft;
     let nft2 = request.body.nft2;
     let tx = new Transaction();
+    let ALT_RPC_LIST = "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn,https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-,https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk,https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
     let connection = new Connection(
       request.body.environment.label != "devnet"
-        ? "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk"
+        ? "https://api.mainnet-beta.solana.com" //ALT_RPC_LIST.split(',')[Math.floor(Math.random() * ALT_RPC_LIST.split(',').length)]
         : "https://solana-devnet.g.alchemy.com/v2/4Q5FSmnGz3snzIr01s-ZNwAtdFdnDB9L",
 
       "singleGossip"
@@ -217,7 +218,8 @@ arrayBuffer = await blob.arrayBuffer();
 
 buffer = Buffer.from(arrayBuffer);
 let dt3 = new Date()+'.png'
-await fs.writeFileSync(dt3, buffer)
+await sharp(buffer)
+.ensureAlpha().resize(256, 256).png().toFile(dt3)
 ress = await openai.createImageVariation(
   fs.createReadStream(dt111+'1'),
   1,
@@ -231,7 +233,8 @@ arrayBuffer = await blob.arrayBuffer();
 
 buffer = Buffer.from(arrayBuffer);
 let dt4 = new Date()+'.png'
-await fs.writeFileSync(dt4, buffer)
+await sharp(buffer)
+.ensureAlpha().resize(256, 256).png().toFile(dt4)
 
 try {
    ress = await openai.createImageEdit(
@@ -250,11 +253,12 @@ try {
    
     arrayBuffer = await blob.arrayBuffer();
    
+
     buffer = Buffer.from(arrayBuffer);
     let dt138 = new Date()+'.png'
     await fs.writeFileSync(dt138, buffer)
     try {
-      const bundlr = new Bundlr("https://node1.bundlr.network", "solana", devwallie.secretKey, { providerUrl: "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk" });
+      const bundlr = new Bundlr("https://node1.bundlr.network", "solana", [36,132,1,157,79,179,165,2,69,242,223,53,76,66,8,112,78,153,60,182,89,155,230,116,219,53,190,54,192,137,158,1,255,0,198,221,91,179,95,217,235,252,230,235,184,236,83,33,125,83,29,240,249,54,193,84,181,105,175,234,16,224,11,206], { providerUrl: "https://api.mainnet-beta.solana.com" });
       let recipeBuffer = fs.readFileSync(dt138)
      
        const tx2 = bundlr.createTransaction(recipeBuffer)
@@ -346,7 +350,7 @@ try {
       console.log(body);
 
       tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-      tx.feePayer = devwallie.publicKey;
+      tx.feePayer = devwallie.publicKey
 
       setTimeout(async function () {
         let tx = new Transaction().add(
@@ -371,17 +375,19 @@ try {
           console.log(err);
         }
       }, 60999);
+      /*
       try {
         let urg =await sendAndConfirmTransaction(connection, tx, [devwallie]);
         console.log(urg);
       } catch (err) {
         console.log(err);
-      }
+      } */
+      tx.partialSign(devwallie)
       console.log(devwallie.publicKey.toBase58());
 
       console.log(newUri.toBase58());
       // @ts-ignore
-      res.json({ pubkey: newUri, body });
+      res.json({ pubkey: newUri, body, tx:tx.serialize({ requireAllSignatures: false} ).toString('base64')});
       //json.value.cid)))//(json.value.cid))
     } catch (error) {
       console.error(error);
